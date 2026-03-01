@@ -2,6 +2,8 @@
 
 The Mentorship Index (M-index) measures a scientist's contribution to mentoring early-career scientists. The M-index counts publications where the scientist served as last author (the senior/mentoring role) and the first author (the mentee who led the work) was relatively new to science, proxied by the number of publications associated with their name at the time. For example, the M10-index is the number of last-author publications where the first author had fewer than 10 publications at the time.
 
+Read [my blog post for more background and details](https://jef.works/blog/2026/03/01/mentorship-index/). 
+
 ## Website
 
 `index.html` is a single-page web app that lets users look up any scientist's M-index. It runs entirely in the browser with no backend — all data is fetched live from the [OpenAlex](https://openalex.org/) API.
