@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mentorship Index Calculator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f5f7fa;
+    color: #1a1a2e;
+    line-height: 1.6;
+    padding: 2rem 1rem;
+  }
+
+  .container { max-width: 720px; margin: 0 auto; text-align: center; }
+
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .subtitle {
+    color: #64748b;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+    text-align:left;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 0.3rem; }
+  .field label { font-size: 0.8rem; font-weight: 600; color: #475569; }
+
+  .field input {
+    padding: 0.55rem 0.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field input:focus { border-color: #6366f1; }
+
+  #nameInput { width: 280px; }
+  #thresholdInput { width: 80px; }
+
+  button {
+    padding: 0.55rem 1.4rem;
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  button:hover { background: #4f46e5; }
+  button:disabled { background: #a5b4fc; cursor: not-allowed; }
+
+  .author-info {
+    background: #eef2ff;
+    border-left: 4px solid #6366f1;
+    padding: 0.75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  .progress {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: #475569;
+    text-align: left;
+  }
+
+  .progress-bar-track {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: #6366f1;
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  .indices {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .index-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    min-width: 240px;
+    text-align: center;
+  }
+
+  .index-card .label { font-size: 1.8rem; color: #64748b; font-weight: 600; }
+  .index-card .value { font-size: 2.75rem; font-weight: 700; color: #6366f1; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  th {
+    background: #f8fafc;
+    text-align: left;
+    padding: 0.65rem 0.75rem;
+    font-weight: 600;
+    color: #475569;
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  th.num, td.num { text-align: right; }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8fafc; }
+
+  .error {
+    background: #fef2f2;
+    border-left: 4px solid #ef4444;
+    color: #991b1b;
+    padding: 0.75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  .share-bar {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+  }
+
+  .share-bar .share-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #4338ca;
+    margin-right: 0.25rem;
+  }
+
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #fff;
+    color: #334155;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .share-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
+  .share-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  .share-btn.x-btn:hover { color: #000; }
+  .share-btn.li-btn:hover { color: #0a66c2; }
+  .share-btn.bsky-btn:hover { color: #0085ff; }
+  .share-btn.copy-btn:hover { color: #6366f1; }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Mentorship Index Calculator</h1>
+  <p class="subtitle">
+    The Mentorship Index (M-index) measures a scientist's contribution to mentoring early-career scientists. 
+    The M-index counts the number of publications for which the scientist served as last author (typically indicating the senior/mentoring role) 
+    where the first author (typically the mentee who led the work) was relatively new to science (proxied by the number of publications associated with their name at that time). 
+    For example, the M10-index is the number of last-author publications where the first author had fewer than 10 publications at the time.
+      <br><br>
+    Enter the name of a scientist to compute their Mentorship Index. Built on <a href="https://openalex.org/">OpenAlex</a>.
+  </p>
+  <div class="form-row">
+    <div class="field">
+      <label for="nameInput">Author name</label>
+      <input id="nameInput" type="text" placeholder="e.g. Jean Fan">
+    </div>
+    <div class="field">
+      <label for="thresholdInput">Threshold (N)</label>
+      <input id="thresholdInput" type="number" min="1" value="10">
+    </div>
+    <button id="computeBtn" onclick="run()">Compute</button>
+  </div>
+
+  <div id="errorBox" class="error hidden"></div>
+  <div id="authorInfo" class="author-info hidden"></div>
+  <div id="progressBox" class="progress hidden">
+    <span id="progressText"></span>
+    <div class="progress-bar-track"><div id="progressFill" class="progress-bar-fill"></div></div>
+  </div>
+  <div id="indicesBox" class="indices hidden"></div>
+  <div id="shareBar" class="share-bar hidden"></div>
+  <div id="tableBox" class="hidden"></div>
+</div>
+
+<script>
+const BASE = "https://api.openalex.org";
+const MAILTO = "polite@user.com";
+
+function qs(sel) { return document.querySelector(sel); }
+function show(el) { el.classList.remove("hidden"); }
+function hide(el) { el.classList.add("hidden"); }
+
+async function apiGet(path, params) {
+  params.mailto = MAILTO;
+  const url = new URL(BASE + path);
+  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`API error ${resp.status}: ${resp.statusText}`);
+  return resp.json();
+}
+
+async function searchAuthor(name) {
+  const data = await apiGet("/authors", { search: name });
+  const results = data.results || [];
+  if (results.length === 0) throw new Error(`No author found for "${name}"`);
+  return results[0];
+}
+
+async function fetchLastAuthorWorks(authorId) {
+  const shortId = authorId.replace("https://openalex.org/", "");
+  let cursor = "*";
+  const works = [];
+
+  while (cursor) {
+    const data = await apiGet("/works", {
+      filter: `authorships.author.id:${shortId}`,
+      per_page: 200,
+      cursor,
+    });
+
+    for (const work of (data.results || [])) {
+      const authorships = work.authorships || [];
+      const isLast = authorships.some(
+        a => a.author.id === authorId && a.author_position === "last"
+      );
+      if (!isLast) continue;
+
+      const first = authorships.find(a => a.author_position === "first");
+      works.push({
+        title: work.display_name || "",
+        year: work.publication_year,
+        firstAuthorId: first ? first.author.id : null,
+        firstAuthorName: first ? (first.author.display_name || "") : "",
+      });
+    }
+
+    cursor = (data.meta || {}).next_cursor || null;
+  }
+
+  works.sort((a, b) => (b.year || 0) - (a.year || 0));
+  return works;
+}
+
+async function countPriorWorks(authorId, beforeYear) {
+  const shortId = authorId.replace("https://openalex.org/", "");
+  const data = await apiGet("/works", {
+    filter: `authorships.author.id:${shortId},publication_year:<${beforeYear}`,
+    per_page: 1,
+  });
+  return (data.meta || {}).count || 0;
+}
+
+async function buildMentorshipRows(works, onProgress) {
+  const rows = [];
+  const cache = {};
+
+  for (let i = 0; i < works.length; i++) {
+    const w = works[i];
+    let menteeScore = null;
+
+    if (w.firstAuthorId && w.year) {
+      const key = `${w.firstAuthorId}|${w.year}`;
+      if (!(key in cache)) {
+        cache[key] = await countPriorWorks(w.firstAuthorId, w.year);
+      }
+      menteeScore = cache[key];
+    }
+
+    rows.push({
+      title: w.title,
+      year: w.year,
+      firstAuthorName: w.firstAuthorName,
+      menteeScore,
+    });
+
+    if (onProgress) onProgress(i + 1, works.length, w.firstAuthorName, menteeScore);
+  }
+
+  return rows;
+}
+
+function computeIndices(rows, threshold) {
+  const scores = rows.map(r => r.menteeScore).filter(s => s !== null);
+  return {
+    [`M${threshold}`]: scores.filter(s => s < threshold).length,
+  };
+}
+
+function renderTable(rows) {
+  const tableBox = qs("#tableBox");
+  let html = `<table>
+    <thead><tr>
+      <th>Title</th>
+      <th class="num">Year</th>
+      <th>First Author</th>
+      <th class="num">Mentee Publication Count</th>
+    </tr></thead><tbody>`;
+  for (const r of rows) {
+    const score = r.menteeScore !== null ? r.menteeScore : "N/A";
+    html += `<tr>
+      <td>${escHtml(r.title)}</td>
+      <td class="num">${r.year ?? ""}</td>
+      <td>${escHtml(r.firstAuthorName)}</td>
+      <td class="num">${score}</td>
+    </tr>`;
+  }
+  html += "</tbody></table>";
+  tableBox.innerHTML = html;
+  show(tableBox);
+}
+
+function renderIndices(indices) {
+  const box = qs("#indicesBox");
+  box.innerHTML = Object.entries(indices)
+    .map(([label, value]) =>
+      `<div class="index-card"><div class="label">${label}</div><div class="value">${value}</div></div>`
+    ).join("");
+  show(box);
+}
+
+function escHtml(s) {
+  const d = document.createElement("div");
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function renderShareBar(authorName, indices) {
+  const bar = qs("#shareBar");
+  const [label, value] = Object.entries(indices)[0];
+  const text = `The Mentorship Index (M-index) measures a scientist's contribution to mentoring early-career researchers. My ${label}-index is ${value}! Find your Mentorship Index:`;
+  const pageUrl = window.location.href;
+  const encoded = encodeURIComponent(text + " " + pageUrl);
+
+  const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(pageUrl)}`;
+  const liUrl = `https://www.linkedin.com/feed/?shareActive=true&text=${encoded}`;
+  const bskyUrl = `https://bsky.app/intent/compose?text=${encoded}`;
+
+  bar.innerHTML = `
+    <span class="share-label">Share Your Results:</span>
+    <a class="share-btn x-btn" href="${xUrl}" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      Twitter
+    </a>
+    <a class="share-btn li-btn" href="${liUrl}" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      LinkedIn
+    </a>
+    <a class="share-btn bsky-btn" href="${bskyUrl}" target="_blank" rel="noopener">
+      <svg viewBox="0 0 600 530" fill="currentColor"><path d="M135.72 44.03C202.216 93.951 273.74 195.17 300 249.49c26.262-54.316 97.782-155.54 164.28-205.46C512.26 8.009 590-19.862 590 68.825c0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.38-3.69-10.832-3.708-7.896-.017-2.936-1.193.516-3.707 7.896-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.256 82.697-152.22-67.108 11.421-142.549-7.449-163.25-81.433C20.15 217.613 10 86.536 10 68.824c0-88.687 77.742-60.816 125.72-24.795z"/></svg>
+      Bluesky
+    </a>
+    <button class="share-btn copy-btn" onclick="copyShareText()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      Copy
+    </button>
+  `;
+  bar.dataset.shareText = text + " " + pageUrl;
+  show(bar);
+}
+
+function copyShareText() {
+  const text = qs("#shareBar").dataset.shareText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = qs(".copy-btn");
+    const orig = btn.innerHTML;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+    setTimeout(() => { btn.innerHTML = orig; }, 2000);
+  });
+}
+
+function setProgress(text, pct) {
+  qs("#progressText").textContent = text;
+  qs("#progressFill").style.width = pct + "%";
+}
+
+async function run() {
+  const name = qs("#nameInput").value.trim();
+  const threshold = parseInt(qs("#thresholdInput").value, 10) || 10;
+  if (!name) { qs("#nameInput").focus(); return; }
+
+  const btn = qs("#computeBtn");
+  btn.disabled = true;
+  hide(qs("#errorBox"));
+  hide(qs("#authorInfo"));
+  hide(qs("#indicesBox"));
+  hide(qs("#shareBar"));
+  hide(qs("#tableBox"));
+  show(qs("#progressBox"));
+
+  try {
+    setProgress("Searching for author…", 0);
+    const author = await searchAuthor(name);
+    const info = qs("#authorInfo");
+    info.innerHTML = `<strong>${escHtml(author.display_name)}</strong> &mdash; ${author.works_count} total works (ID: ${escHtml(author.id)})`;
+    show(info);
+
+    setProgress("Fetching last-author publications…", 5);
+    const works = await fetchLastAuthorWorks(author.id);
+    if (works.length === 0) throw new Error("No last-author publications found.");
+
+    setProgress(`Found ${works.length} last-author papers. Quantifying mentee publication counts…`, 10);
+
+    const rows = await buildMentorshipRows(works, (done, total, faName, score) => {
+      const pct = 10 + Math.round((done / total) * 90);
+      setProgress(`[${done}/${total}] ${faName}: mentee_score = ${score ?? "N/A"}`, pct);
+    });
+
+    hide(qs("#progressBox"));
+
+    const indices = computeIndices(rows, threshold);
+    renderIndices(indices);
+    renderShareBar(author.display_name, indices);
+    renderTable(rows);
+  } catch (err) {
+    hide(qs("#progressBox"));
+    const errBox = qs("#errorBox");
+    errBox.textContent = err.message;
+    show(errBox);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+qs("#nameInput").addEventListener("keydown", e => { if (e.key === "Enter") run(); });
+</script>
+</body>
+</html>
