@@ -12,6 +12,8 @@ The Mentorship Index (M-index) measures a scientist's contribution to mentoring 
 
 Note this quantification is liable to errors where the scientist's name is common (ie. not a unique identifier). 
 
+<img src="screenshot.png">
+
 ## Python script
 
 The M-index was initially developed and tested via a Python script `mentorship_index.py` and converted into Javascript for web accessibility. If you prefer to use Python, you can also run `python mentorship_index.py "Author Name"` to compute the M10 and M25 indices. 
