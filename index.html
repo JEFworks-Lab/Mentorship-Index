@@ -218,7 +218,7 @@
 <div class="container">
   <h1>Mentorship Index Calculator</h1>
   <p class="subtitle">
-    The Mentorship Index (M-index) measures a scientist's contribution to mentoring early-career scientists. 
+    The Mentorship Index (M-index) measures a scientist's contribution to mentoring junior scientists. 
     The M-index counts the number of publications for which the scientist served as last author (typically indicating the senior/mentoring role) 
     where the first author (typically the mentee who led the work) was relatively new to science (proxied by the number of publications associated with their name at that time). 
     For example, the M10-index is the number of last-author publications where the first author had fewer than 10 publications at the time.
@@ -393,7 +393,7 @@ function escHtml(s) {
 function renderShareBar(authorName, indices) {
   const bar = qs("#shareBar");
   const [label, value] = Object.entries(indices)[0];
-  const text = `The Mentorship Index (M-index) measures a scientist's contribution to mentoring early-career researchers. My ${label}-index is ${value}! Find your Mentorship Index:`;
+  const text = `The Mentorship Index (M-index) measures a scientist's contribution to mentoring junior scientists. My ${label}-index is ${value}! Find your Mentorship Index:`;
   const pageUrl = window.location.href;
   const encoded = encodeURIComponent(text + " " + pageUrl);
 
@@ -491,3 +491,4 @@ qs("#nameInput").addEventListener("keydown", e => { if (e.key === "Enter") run()
 </script>
 </body>
 </html>
+
